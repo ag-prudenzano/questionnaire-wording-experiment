@@ -1,0 +1,7 @@
+parameter,value
+seed,20260811
+respondents,2400
+allocation,1:1:1
+wording_neutral,How likely are you to use the council's new online services?
+wording_benefit_framed,"How likely are you to use the council's new online services, which can save residents time?"
+wording_effort_framed,"How likely are you to use the council's new online services, even if setup takes a few minutes?"

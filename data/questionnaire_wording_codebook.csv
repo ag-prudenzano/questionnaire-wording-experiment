@@ -1,0 +1,11 @@
+variable,description
+respondent_id,Synthetic respondent identifier
+wording_arm,Randomised wording condition
+question_wording,Displayed item text
+age_band,Age subgroup
+gender,Simulated gender
+digital_confidence_z,Standardised digital confidence
+likelihood_1_5,Five-point outcome; blank means item nonresponse
+item_missing,Item nonresponse indicator
+survey_completed,Survey completion indicator
+completion_seconds,Total survey duration
