@@ -178,7 +178,7 @@ The three arms differ by one clause while retaining the same five-point response
 
 The benefit frame increased agreement by {e.loc[("Benefit-framed","Agreement rate (pp)"),'effect']:+.1f} percentage points versus neutral (95% CI {e.loc[("Benefit-framed","Agreement rate (pp)"),'ci_low']:+.1f} to {e.loc[("Benefit-framed","Agreement rate (pp)"),'ci_high']:+.1f}). The effort frame changed agreement by {e.loc[("Effort-framed","Agreement rate (pp)"),'effect']:+.1f} points (95% CI {e.loc[("Effort-framed","Agreement rate (pp)"),'ci_low']:+.1f} to {e.loc[("Effort-framed","Agreement rate (pp)"),'ci_high']:+.1f}). These shifts arise from wording alone because assignment is random.
 
-## Effect Sizes & CIs
+## Effect Sizes and Confidence Intervals
 
 | Contrast | Outcome | Effect | 95% CI |
 |---|---|---:|---:|
@@ -186,7 +186,7 @@ The benefit frame increased agreement by {e.loc[("Benefit-framed","Agreement rat
 
 For the mean scale, Cohen's d was {e.loc[("Benefit-framed","Mean likelihood (points)"),'cohens_d']:+.2f} for benefit framing and {e.loc[("Effort-framed","Mean likelihood (points)"),'cohens_d']:+.2f} for effort framing. Confidence intervals use large-sample independent-group standard errors; intervals excluding zero correspond to a two-sided 5% significance test.
 
-## Completion & Heterogeneity
+## Completion Behaviour and Heterogeneity
 
 Effort framing produced both a longer median interview and lower completion, consistent with the clause making burden more salient. The age audit is exploratory: the simulated negative effort effect is strongest among respondents aged 55+, so it should be treated as a diagnostic rather than a separately powered confirmatory test.
 
