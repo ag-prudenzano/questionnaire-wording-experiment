@@ -32,7 +32,7 @@ The three arms differ by one clause while retaining the same five-point response
 
 The benefit frame increased agreement by +13.5 percentage points versus neutral (95% CI +8.7 to +18.4). The effort frame changed agreement by -11.2 points (95% CI -15.9 to -6.6). These shifts arise from wording alone because assignment is random.
 
-## Effect Sizes and Confidence Intervals
+## Effect Sizes & CIs
 
 | Contrast | Outcome | Effect | 95% CI |
 |---|---|---:|---:|
@@ -47,7 +47,7 @@ The benefit frame increased agreement by +13.5 percentage points versus neutral 
 
 For the mean scale, Cohen's d was +0.36 for benefit framing and -0.28 for effort framing. Confidence intervals use large-sample independent-group standard errors; intervals excluding zero correspond to a two-sided 5% significance test.
 
-## Completion Behaviour and Heterogeneity
+## Completion & Heterogeneity
 
 Effort framing produced both a longer median interview and lower completion, consistent with the clause making burden more salient. The age audit is exploratory: the simulated negative effort effect is strongest among respondents aged 55+, so it should be treated as a diagnostic rather than a separately powered confirmatory test.
 
