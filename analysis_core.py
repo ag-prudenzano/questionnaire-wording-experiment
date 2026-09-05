@@ -18,8 +18,9 @@ QUESTIONS = {
     "Benefit-framed": "How likely are you to use the council's new online services, which can save residents time?",
     "Effort-framed": "How likely are you to use the council's new online services, even if setup takes a few minutes?",
 }
-BG, TEXT, MUTED, GRID = "#0C0C0D", "#FFFFFF", "#A2A2A9", "#313135"
-COLORS = ["#777780", "#E6E6E8", "#AFAFB5"]
+BG, TEXT, MUTED = "#000000", "#FFFFFF", "#B3B3B3"
+LINE, GRID = "#404040", "#333333"
+COLORS = ["#666666", "#B3B3B3", "#FFFFFF"]
 
 
 def git(*args, check=True):
@@ -128,16 +129,16 @@ def create_figures(summary, effects, dist, subgroup):
     fig, ax = plt.subplots(figsize=(10, 5.8)); style(ax); x=np.arange(1,6); w=.24
     for i, arm in enumerate(ARMS):
         vals=dist[dist.wording_arm.eq(arm)].set_index("likelihood_1_5").share.reindex(x, fill_value=0)
-        ax.bar(x+(i-1)*w, vals*100, w, label=arm, color=COLORS[i])
+        ax.bar(x+(i-1)*w, vals*100, w, label=arm, color=COLORS[i], edgecolor=LINE)
     ax.set(title="Response distributions shift with questionnaire wording", xlabel="Likelihood response (1–5)", ylabel="Share of valid responses (%)", xticks=x); ax.legend(frameon=False, labelcolor=TEXT)
     fig.tight_layout(); fig.savefig(FIGURES/"response_distributions.png", dpi=180, facecolor=BG); plt.close(fig)
     plot=effects[effects.outcome.isin(["Agreement rate (pp)", "Item nonresponse (pp)", "Completion rate (pp)"])].copy(); plot["label"]=plot.contrast_vs_neutral+" — "+plot.outcome
     fig, ax=plt.subplots(figsize=(10,6)); style(ax, "x"); y=np.arange(len(plot)); ax.axvline(0,color=TEXT,lw=1)
-    ax.errorbar(plot.effect,y,xerr=[plot.effect-plot.ci_low,plot.ci_high-plot.effect],fmt="o",color=TEXT,ecolor="#888890",capsize=3)
+    ax.errorbar(plot.effect,y,xerr=[plot.effect-plot.ci_low,plot.ci_high-plot.effect],fmt="o",color=TEXT,ecolor=MUTED,capsize=3)
     ax.set(yticks=y,yticklabels=plot.label, xlabel="Difference versus neutral (percentage points)", title="Wording effects with 95% confidence intervals"); fig.tight_layout(); fig.savefig(FIGURES/"effect_sizes_confidence_intervals.png",dpi=180,facecolor=BG); plt.close(fig)
     pivot=subgroup.pivot(index="age_band",columns="wording_arm",values="agreement_rate").reindex(columns=ARMS)*100
     fig,ax=plt.subplots(figsize=(9.5,5.6)); style(ax); x=np.arange(len(pivot)); w=.24
-    for i,arm in enumerate(ARMS): ax.bar(x+(i-1)*w,pivot[arm],w,label=arm,color=COLORS[i])
+    for i,arm in enumerate(ARMS): ax.bar(x+(i-1)*w,pivot[arm],w,label=arm,color=COLORS[i],edgecolor=LINE)
     ax.set(xticks=x,xticklabels=pivot.index,ylabel="Agreement rate (%)",title="Age patterns suggest stronger effort-framing sensitivity among older adults"); ax.legend(frameon=False,labelcolor=TEXT); fig.tight_layout(); fig.savefig(FIGURES/"agreement_by_age.png",dpi=180,facecolor=BG); plt.close(fig)
 
 
