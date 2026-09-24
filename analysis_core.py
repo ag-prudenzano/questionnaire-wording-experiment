@@ -1,4 +1,5 @@
 from pathlib import Path
+from io import BytesIO
 import subprocess
 
 try:
@@ -18,9 +19,68 @@ QUESTIONS = {
     "Benefit-framed": "How likely are you to use the council's new online services, which can save residents time?",
     "Effort-framed": "How likely are you to use the council's new online services, even if setup takes a few minutes?",
 }
-BG, TEXT, MUTED = "#000000", "#FFFFFF", "#B3B3B3"
+BG, TEXT, MUTED = "#0F0F0F", "#FFFFFF", "#B3B3B3"
 LINE, GRID = "#404040", "#333333"
 COLORS = ["#666666", "#B3B3B3", "#FFFFFF"]
+
+FIGURE_PADDING_PX = 30
+FIGURE_CORNER_RADIUS_PX = 38
+
+
+def save_rounded_figure(fig, path, dpi=200):
+    """Save a chart on a rounded #0F0F0F container with a 30 px inset."""
+    buffer = BytesIO()
+    fig.savefig(
+        buffer,
+        format="png",
+        dpi=dpi,
+        facecolor=BG,
+        bbox_inches="tight",
+        pad_inches=0,
+    )
+    buffer.seek(0)
+    image = plt.imread(buffer)
+    if image.shape[-1] == 3:
+        image = np.dstack(
+            [image, np.ones(image.shape[:2], dtype=image.dtype)]
+        )
+
+    height, width = image.shape[:2]
+    padding = FIGURE_PADDING_PX
+    background_rgb = np.array(
+        [int(BG[i : i + 2], 16) / 255 for i in (1, 3, 5)],
+        dtype=np.float32,
+    )
+    canvas = np.empty(
+        (height + 2 * padding, width + 2 * padding, 4),
+        dtype=np.float32,
+    )
+    canvas[..., :3] = background_rgb
+    canvas[..., 3] = 1.0
+    canvas[padding : padding + height, padding : padding + width] = image
+
+    canvas_height, canvas_width = canvas.shape[:2]
+    radius = min(
+        FIGURE_CORNER_RADIUS_PX,
+        canvas_height // 2,
+        canvas_width // 2,
+    )
+    y, x = np.ogrid[:canvas_height, :canvas_width]
+    edge_x = np.minimum(x, canvas_width - 1 - x)
+    edge_y = np.minimum(y, canvas_height - 1 - y)
+    corner = (edge_x < radius) & (edge_y < radius)
+    distance = np.sqrt(
+        (radius - 0.5 - edge_x) ** 2
+        + (radius - 0.5 - edge_y) ** 2
+    )
+    alpha = np.ones((canvas_height, canvas_width), dtype=np.float32)
+    alpha[corner] = np.clip(
+        radius + 0.5 - distance[corner],
+        0,
+        1,
+    )
+    canvas[..., 3] *= alpha
+    plt.imsave(path, np.clip(canvas, 0, 1))
 
 
 def git(*args, check=True):
@@ -131,15 +191,15 @@ def create_figures(summary, effects, dist, subgroup):
         vals=dist[dist.wording_arm.eq(arm)].set_index("likelihood_1_5").share.reindex(x, fill_value=0)
         ax.bar(x+(i-1)*w, vals*100, w, label=arm, color=COLORS[i], edgecolor=LINE)
     ax.set(title="Response distributions shift with questionnaire wording", xlabel="Likelihood response (1–5)", ylabel="Share of valid responses (%)", xticks=x); ax.legend(frameon=False, labelcolor=TEXT)
-    fig.tight_layout(); fig.savefig(FIGURES/"response_distributions.png", dpi=180, facecolor=BG); plt.close(fig)
+    fig.tight_layout(); save_rounded_figure(fig, FIGURES/"response_distributions.png", dpi=180); plt.close(fig)
     plot=effects[effects.outcome.isin(["Agreement rate (pp)", "Item nonresponse (pp)", "Completion rate (pp)"])].copy(); plot["label"]=plot.contrast_vs_neutral+" — "+plot.outcome
     fig, ax=plt.subplots(figsize=(10,6)); style(ax, "x"); y=np.arange(len(plot)); ax.axvline(0,color=TEXT,lw=1)
     ax.errorbar(plot.effect,y,xerr=[plot.effect-plot.ci_low,plot.ci_high-plot.effect],fmt="o",color=TEXT,ecolor=MUTED,capsize=3)
-    ax.set(yticks=y,yticklabels=plot.label, xlabel="Difference versus neutral (percentage points)", title="Wording effects with 95% confidence intervals"); fig.tight_layout(); fig.savefig(FIGURES/"effect_sizes_confidence_intervals.png",dpi=180,facecolor=BG); plt.close(fig)
+    ax.set(yticks=y,yticklabels=plot.label, xlabel="Difference versus neutral (percentage points)", title="Wording effects with 95% confidence intervals"); fig.tight_layout(); save_rounded_figure(fig, FIGURES/"effect_sizes_confidence_intervals.png", dpi=180); plt.close(fig)
     pivot=subgroup.pivot(index="age_band",columns="wording_arm",values="agreement_rate").reindex(columns=ARMS)*100
     fig,ax=plt.subplots(figsize=(9.5,5.6)); style(ax); x=np.arange(len(pivot)); w=.24
     for i,arm in enumerate(ARMS): ax.bar(x+(i-1)*w,pivot[arm],w,label=arm,color=COLORS[i],edgecolor=LINE)
-    ax.set(xticks=x,xticklabels=pivot.index,ylabel="Agreement rate (%)",title="Age patterns suggest stronger effort-framing sensitivity among older adults"); ax.legend(frameon=False,labelcolor=TEXT); fig.tight_layout(); fig.savefig(FIGURES/"agreement_by_age.png",dpi=180,facecolor=BG); plt.close(fig)
+    ax.set(xticks=x,xticklabels=pivot.index,ylabel="Agreement rate (%)",title="Age patterns suggest stronger effort-framing sensitivity among older adults"); ax.legend(frameon=False,labelcolor=TEXT); fig.tight_layout(); save_rounded_figure(fig, FIGURES/"agreement_by_age.png", dpi=180); plt.close(fig)
 
 
 def pct(x): return f"{100*x:.1f}%"
